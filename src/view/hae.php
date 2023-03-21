@@ -78,7 +78,7 @@ foreach ($hae as $haku) {
     echo "</tr>";
 
     echo "<tr>";
-    echo "<td>Sijoiutksella saadut osakkeet kpl</td>";
+    echo "<td>Sijlituksella saadut osakkeet kpl</td>";
     foreach ($hae as $haku) {
     echo "<td>" . ROUND($haku['sijoitus']/$haku['osakehinta'],2) . "</td>";
     } 
