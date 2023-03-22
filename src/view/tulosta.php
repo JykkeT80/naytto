@@ -1,4 +1,4 @@
-<?php $this->layout('template', ['title' => 'Hae tiedot']); ?>
+<?php $this->layout('template', ['title' => 'Tulosta tiedot']); ?>
 
 <h1>Tietojen tulostus tietokannasta</h1>
 
@@ -117,9 +117,10 @@ foreach ($hae as $haku) {
 </form>
 
 <?php
-
+echo "<br>";
 if ($_POST) {
     echo "TUOTTOJEN SIJOITUS VUOSI VUODELTA";
+    echo "<hr>";
     echo "<br>";
     foreach ($hae as $haku) {
         $maara2 = array();
@@ -185,176 +186,3 @@ echo "</table>";
 }
 }
 ?>
-
-
-<?php
-/*
-$euro = array();
-$pros= array();
-    echo "<tr>";
-    echo "<td>Edellisen vuoden tuotolla hankitut osakkeet (kpl)</td>";
-    for ($i=0; $i<4; $i++) {
-        echo "<td>$maara[$i]</td>";
-        $tulos = sipo($osaketuotto, $yhtmaara, $haku['sijoitus']);
-        array_push($euro, ROUND($tulos[0],2));    # vai $tuotto€ = ROUND($tulos[0], 2); array_push($euro, $tuotto€);    
-        array_push($pros, ROUND($tulos[1],2));  #vai $tuottoPros= ROUND($tulos[1], 2); array_push($pros, $tuottoPros);
-        $uudetOsakkeet = tuottoVuosittain($tulos[0], $haku['osakehinta']); 
-        $yhtmaara += $uudetOsakkeet;
-    }
-    echo "</tr>"; 
-    /*foreach ($hae as $haku) {
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>$haku[nimi]</th>";
-            for ($i=2; $i<6; $i++) {   #otsikot, nimi, vuodet
-                echo "<th>$i. vuosi</th>"; 
-            }
-            echo "</tr>";
-            echo "<tr>";
-            echo "<td>Edellisen vuoden tuotolla hankitut osakkeet (kpl)</td>";
-            for ($i=0; $i<4; $i++) {
-                echo "<td>$maara[$i]</td>";
-                $tulos = sipo($osaketuotto, $yhtmaara, $sijoitus);
-                array_push($euro, ROUND($tulos[0],2));    # vai $tuotto€ = ROUND($tulos[0], 2); array_push($euro, $tuotto€);    
-                array_push($pros, ROUND($tulos[1],2));  #vai $tuottoPros= ROUND($tulos[1], 2); array_push($pros, $tuottoPros);
-                $uudetOsakkeet = tuottoVuosittain($tulos[0], $osakehinta); 
-                $yhtmaara += $uudetOsakkeet;
-
-            }
-            echo "</tr>";
-}}
-     #array_push($maara, ROUND($uudetOsakkeet,2));
-
-    /*
-    #TÄSTÄ ALKAA
-    $maara = array(); #uusien osakkeiden määrä
-    echo "<table>";
-    echo "<tr>";
-    foreach ($hae as $haku) {
-        echo "<th>$haku[nimi]</th>";
-        for ($i=2; $i<6; $i++) {   #otsikot, nimi, vuodet
-            echo "<th>$i. vuosi</th>"; 
-        }
-    }
-    echo "</tr>";
-
-    $maara= array();
-    $euro =array();
-    $pros = array();
-
-    echo "<tr>";
-    echo "<td>Edellisen vuoden tuotolla hankitut osakkeet (kpl)</td>";
-    foreach ($hae as $haku) {
-    for ($i=0; $i<4; $i++) {
-    array_push($maara, ROUND(tuottoVuosittain($osTuotto€[$i], $haku['osakehinta']),2));  #lisätään listaan uusien osakkeiden määrä
-    echo "<td>$maara[$i]</td>";
-    $tulos = sipo($osaketuotto, $yhtmaara, $sijoitus); #lasketaan uudet tuottoluvut osakkeiden määrän muututtua
-    $uudetOsakkeet = tuottoVuosittain($tulos[0], $osakehinta); #lasketaan uusien osakkeiden määrä
-    $yhtmaara += $uudetOsakkeet;  #sijoittajan osakkeiden yhteistmäärä
-    }}
-    /*
-    }
-    foreach ($hae as $haku) {
-        echo "<th>$haku[nimi]</th>";
-        for ($i=2; $i<6; $i++) {   #otsikot, nimi, vuodet
-            echo "<th>$i. vuosi</th>"; 
-        }
-    }
-    echo "</tr>";
-
-    $maara= array();
-    $euro =array();
-    $pros = array();
-
-    echo "<tr>";
-    echo "<td>Edellisen vuoden tuotolla hankitut osakkeet (kpl)</td>";
-    foreach ($hae as $haku) {
-    for ($i=0; $i<4; $i++) {
-    array_push($maara, ROUND(tuottoVuosittain($osTuotto€[$i], $haku['osakehinta']),2));  #lisätään listaan uusien osakkeiden määrä
-    echo "<td>$maara[$i]</td>";
-    $tulos = sipo($osaketuotto, $yhtmaara, $sijoitus); #lasketaan uudet tuottoluvut osakkeiden määrän muututtua
-    $uudetOsakkeet = tuottoVuosittain($tulos[0], $osakehinta); #lasketaan uusien osakkeiden määrä
-    $yhtmaara += $uudetOsakkeet;  #sijoittajan osakkeiden yhteistmäärä
-    }
-    }
-    echo "</tr>";
-
-    echo "<tr>";
-    echo "<td>Osakkeiden yhteismäärä (kpl)</td>";
-    foreach ($hae as $haku) {
-    $yht = $osakkeetAlussa;
-    for ($i=0; $i<4; $i++) {  #iteroidaan uusien osakkeiden määärä vuosittain
-    $yht += $maara[$i];
-    echo "<td>" . ROUND($yht,2). "</td>";
-    }
-    }
-    echo "</tr>";
-
-    echo "<tr>";
-    echo "<td>Tuotto (€)</td>"; #iteroidaan tuotto€ vuosittain
-    for ($i=0; $i<4; $i++) {
-    echo "<td>$osTuotto€[$i]</td>";
-    }
-    echo "</tr>";
-
-    echo "<tr>";
-    echo "<td>Tuotto suhteessa alkusijoitukseen (%)</td>";
-    for ($i=0; $i<4; $i++) {  #iteroidaan tuottoPros vuosittain
-    echo "<td>$osTuottoPros[$i]</td>";
-    }
-    echo "</tr>";
-    echo "</table>"; 
-    echo "<br>";
-
-/*
-
-echo "<table>";
-echo "<tr>";
-echo "<th></th>";
-for ($i=2; $i<6; $i++) {
-    echo "<th>$i. vuosi</th>"; 
-}
-echo "</tr>";
-
-$maara = array();
-$euro = array();
-$pros= array();
-echo "<tr>";
-echo "<td>Edellisen vuoden tuotolla hankitut osakkeet (kpl)</td>";
-for ($i=0; $i<4; $i++) {
-    array_push($maara, ROUND($uudetOsakkeet,2));
-    echo "<td>$maara[$i]</td>";
-    $tulos = sipo($osaketuotto, $yhtmaara, $sijoitus);
-    array_push($euro, ROUND($tulos[0],2));    # vai $tuotto€ = ROUND($tulos[0], 2); array_push($euro, $tuotto€);    
-    array_push($pros, ROUND($tulos[1],2));  #vai $tuottoPros= ROUND($tulos[1], 2); array_push($pros, $tuottoPros);
-    $uudetOsakkeet = tuottoVuosittain($tulos[0], $osakehinta); 
-    $yhtmaara += $uudetOsakkeet;
-}
-"</tr>";
-
-echo "<tr>";
-echo "<td>Osakkeiden yhteismäärä (kpl)</td>"; 
-$yht = $osakkeetAlussa;
-for ($i=0; $i<4; $i++) {
-    $yht += $maara[$i];
-    echo "<td>$yht</td>";
-}
-echo "</tr>";
-
-echo "<tr>";
-echo "<td>Tuotto (€)</td>";
-for ($i=0; $i<4; $i++) {
-    echo "<td>$euro[$i]</td>";
-}
-echo "</tr>";
-
-echo "<tr>";
-echo "<td>Tuotto suhteessa alkusijoitukseen (%)</td>";
-for ($i=0; $i<4; $i++) {
-    echo "<td>$pros[$i]</td>";
-}
-echo "</tr>";
-echo "</table>"; 
-*/
-?>
-
