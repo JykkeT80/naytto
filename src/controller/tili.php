@@ -1,21 +1,16 @@
 <?php
 
-# tarkistetaan lomaakkeella syötettyjen tietojen oikeellisuus
-# email oikeaa muotoa ja salasanat täsmää
-
 function lisaaTili ($formdata) {
-    #tuodaaan uusi_tili funktiot, joilla voidaan lisätä tili tk:aan
     require_once  (MODEL_DIR . 'lisaa_tili.php');
-    #alustetaan virhetaulukko, palautuu tyhjänä tai virheillä täytettynä
     $error = [];
 
     #lomaketietojen tarkistus, jos muoto ei ole oikea, virhelistaan virhekuvaus
     #jos kaikki läpi virhelista lopus tyhjä
     if (!isset($formadata['nimi']) || !$formadata['nimi']) {
-        $virhe['nimi'] = "Anna nimesi.";
+        $error['nimi'] = "Anna nimesi.";
     } else {
         if (!preg_match("/^[- '\p{L}]+$/u", $formadata['nimi'])) {
-            $virhe['nimi'] = "Syötä nimesi ilman erikoismerkkejä";
+            $error['nimi'] = "Syötä nimesi ilman erikoismerkkejä";
         }
     }
 
@@ -54,8 +49,7 @@ function lisaaTili ($formdata) {
 
         // Lisätään henkilö tietokantaan. Jos lisäys onnistui,
         // tulee palautusarvona lisätyn henkilön id-tunniste.
-        $idhenkilo = lisaaTili($nimi,$email,$salasana);
-        #lisääTIlil jos ei salasanaa vaan kertäkayttötunnus?? vai kuinka
+        $idtili = lisaaTili($nimi,$email,$salasana);
 
         // Palautetaan JSON-tyyppinen taulukko, jossa:
         //  status   = Koodi, joka kertoo lisäyksen onnistumisen.
@@ -75,10 +69,10 @@ function lisaaTili ($formdata) {
         // onnistui rivin lisääminen. Muuten liäämisessä ilmeni
         // ongelma.
 
-        if ($id) {
+        if ($idtili) {
             return [
                 "status" => 200,
-                "id" => $id,
+                "id" => $idtili,
                 "data" => $formdata
             ];
         }else {
