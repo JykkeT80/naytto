@@ -147,7 +147,7 @@ switch ($request) {
             break;
           }
 
-          $formdata = cleanArrayData($_POST);
+          $formdata = siistiTiedot($_POST);
           if (isset($formdata['laheta'])) {
           require_once CONTROLLER_DIR . 'tili.php';
           $tulos = resetoiSalasana($formdata,$resetkey);
