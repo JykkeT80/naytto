@@ -1,0 +1,9 @@
+1. CREATE TABLE henkilo2 (idhenkilo INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, nimi VARCHAR(50) NOT NULL,
+ email VARCHAR(50) NOT NULL, salasana VARCHAR(255) NOT NULL, vahvistettu BOOLEAN NOT NULL DEFAULT (false), vahvavain CHA
+R(40), nollausavain CHAR(40), nollausaika DATETIME, kirjautunut TIMESTAMP);
+
+2. INSERT INTO henkilo2 (idhenkilo, nimi, email, salasana, vahvistettu, vahvavain) VALUES (1,'Eemil Rai
+la','EemilRaila@dayrep.com','$2y$10$eh/LGMmCdJqufTWTH/PDYeWtPPqDp4fQS54PaO3cUNngfcgMgDQry',true,'3349B488172BF325E37C87B
+E3953246403222256');
+
+3. grant select, insert, update, delete on henkilo2 to 'db_TUNNUS'@'localhost';
