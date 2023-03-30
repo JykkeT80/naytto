@@ -1,15 +1,13 @@
 <?php
 
-function lisaaTili ($formdata) {
-    require_once  (MODEL_DIR . 'lisaa_tili.php');
+function lisaaTili ($formdata, $baseurl='') {
+    require_once (MODEL_DIR . 'henkilo.php');
     $error = [];
 
-    #lomaketietojen tarkistus, jos muoto ei ole oikea, virhelistaan virhekuvaus
-    #jos kaikki läpi virhelista lopus tyhjä
-    if (!isset($formadata['nimi']) || !$formadata['nimi']) {
+    if (!isset($formdata['nimi']) || !$formdata['nimi']) {
         $error['nimi'] = "Anna nimesi.";
     } else {
-        if (!preg_match("/^[- '\p{L}]+$/u", $formadata['nimi'])) {
+        if (!preg_match("/^[- '\p{L}]+$/u", $formdata['nimi'])) {
             $error['nimi'] = "Syötä nimesi ilman erikoismerkkejä";
         }
     }
@@ -18,77 +16,151 @@ function lisaaTili ($formdata) {
     if (!isset($formdata['email']) || !$formdata['email']) {
         $error['email'] = "Anna sähköpostiosoitteesi.";
     } else {
-        if (!filter_var($formdata['email'], FILTER_VALIDATE_EMAIL)) {
-            $error['email'] = "Sähköpostiosoite on virheellisessä muodossa";
-        }   else {
-            if (haeTiliSahkopostilla($formdata['email'])) {
-                $error['email'] = "Sähköpostiosoite on jo käytössä.";
-            }         
-        }
+      if (!filter_var($formdata['email'], FILTER_VALIDATE_EMAIL)) {
+        $error['email'] = "Sähköpostiosoite on virheellisessä muodossa";
+      } else {
+        if (haeHenkiloSahkopostilla($formdata['email'])) {
+          $error['email'] = "Sähköpostiosoite on jo käytössä.";
+        }         
+      }
     }
 
     // tark salasanat annettu ja keskennään samat JOS KAKSI SALASANAA!
-    if (isset($formadata['salasana1']) && $formadata['salasana1'] &&
-        isset($formadata['salasana2']) && $formadata['salasana2']) {
-        if ($formadata['salasana1'] != $formdata['salasana2']) {
+    if (isset($formdata['salasana1']) && $formdata['salasana1'] &&
+        isset($formdata['salasana2']) && $formdata['salasana2']) {
+        if ($formdata['salasana1'] != $formdata['salasana2']) {
             $error['salasana'] = "Salasanasi eivät täsmää";
         } 
     }else {
         $error['salasana'] = "Syötä salasanasi kahteen kertaan.";
     }
 
-    // Lisätään tiedot tietokantaan, jos edellä syötettyissä
-    // tiedoissa ei ollut virheitä eli error-taulukosta ei
-    // löydy virhetekstejä.
     if (!$error) {
-        // Haetaan lomakkeen tiedot omiin muuttujiinsa.
-        // Salataan salasana myös samalla
-        $email = $formdata['email'];
-        $salasana = password_hash($formadata['salasana1'], PASSWORD_DEFAULT);
-        $nimi = $formadata['nimi'];
 
-        // Lisätään henkilö tietokantaan. Jos lisäys onnistui,
-        // tulee palautusarvona lisätyn henkilön id-tunniste.
-        $idtili = lisaaTili($nimi,$email,$salasana);
+    $nimi = $formdata['nimi'];
+    $email = $formdata['email'];
+    $salasana = password_hash($formdata['salasana1'], PASSWORD_DEFAULT);
 
-        // Palautetaan JSON-tyyppinen taulukko, jossa:
-        //  status   = Koodi, joka kertoo lisäyksen onnistumisen.
-        //             Hyvin samankaltainen kuin HTTP-protokollan
-        //             vastauskoodi.
-        //             200 = OK
-        //             400 = Bad Request
-        //             500 = Internal Server Error
-        //  id       = Lisätyn rivin id-tunniste.
-        //  formdata = Lisättävän henkilön lomakedata. Sama, mitä
-        //             annettiin syötteenä.
-        //  error    = Taulukko, jossa on lomaketarkistuksessa
-        //             esille tulleet virheet.
+    $idhenkilo = lisaaHenkilo($nimi,$email,$salasana);
 
-        // Tarkistetaan onnistuiko henkilön tietojen lisääminen.
-        // Jos idhenkilo-muuttujassa on positiivinen arvo,
-        // onnistui rivin lisääminen. Muuten liäämisessä ilmeni
-        // ongelma.
+    if ($idhenkilo) {
 
-        if ($idtili) {
-            return [
-                "status" => 200,
-                "id" => $idtili,
-                "data" => $formdata
-            ];
-        }else {
-            return [
-                "status" => 500,
-                "data" => $formdata
-            ];
-        }
-    }else {
-        // Lomaketietojen tarkistuksessa ilmeni virheitä.
-        return [
-            "status" => 400,
-            "data"   => $formdata,
-            "error"  => $error
-        ];
+    require_once(HELPERS_DIR . "salainen.php");
+    $avain = generateActivationCode($email);
+    $url = 'https://' . $_SERVER['HTTP_HOST'] . $baseurl . "/vahvista?key=$avain";
+
+    if (paivitaVahvavain($email,$avain) && lahetaVahvavain($email,$url)) {
+      return [
+        "status" => 200,
+        "id"     => $idhenkilo,
+        "data"   => $formdata
+      ];
+    } else {
+      return [
+        "status" => 500,
+        "data"   => $formdata
+      ];
     }
+  } else {
+    return [
+      "status" => 500,
+      "data"   => $formdata
+    ];
+  }
+
+} else {
+
+    // Lomaketietojen tarkistuksessa ilmeni virheitä.
+    return [
+      "status" => 400,
+      "data"   => $formdata,
+      "error"  => $error
+    ];
+
+  }
 }
-        
+
+function lahetaVahvavain($email,$url) {
+  $message = "Terve!\n\n" . 
+             "Olet luonut tilin sijoutuskoneeseen tällä\n" . 
+             "sähköpostiosoitteella. Klikkaamalla alla olevaa\n" . 
+             "linkkiä vahvistat käyttämäsi sähköpostiosoitteen\n" .
+             "ja pääset laskemaan sijoituksiasi koneella.\n\n" . 
+             "$url\n\n";
+             
+  return mail($email,'Sijoituskoneen aktivointilinkki',$message);
+}
+
+function lahetaVaihtoavain($email,$url) {
+  $message = "Terve!\n\n" .
+             "Pyysit uutta salasanaa, klikkaamalla\n" .
+             "alla olevaa linkkiä pääset vaihtamaan salasanasi.\n" .
+             "Linkki on voimassa 30 minuuttia.\n\n" .
+             "$url\n\n";
+  return mail($email,'Salasanan vaihto sijoituskonepalveluun',$message);
+}
+
+function luoVaihtoavain($email, $baseurl='') {
+  require_once(HELPERS_DIR . "salainen.php");
+  $avain = generateResetCode($email);
+  $url = 'https://' . $_SERVER['HTTP_HOST'] . $baseurl . "/reset?key=$avain";
+  require_once(MODEL_DIR . 'henkilo.php');
+  if (asetaVaihtoavain($email,$avain) && lahetaVaihtoavain($email,$url)) {
+    return [
+      "status"   => 200,
+      "email"    => $email,
+      "resetkey" => $avain
+    ];
+  } else {
+    return [
+      "status" => 500,
+      "email"   => $email
+    ];
+  }
+
+}
+
+function resetoiSalasana($formdata, $resetkey='') {
+  require_once(MODEL_DIR . 'henkilo.php');
+  $error = "";
+  if (isset($formdata['salasana1']) && $formdata['salasana1'] &&
+      isset($formdata['salasana2']) && $formdata['salasana2']) {
+    if ($formdata['salasana1'] != $formdata['salasana2']) {
+      $error = "Salasanasi eivät olleet samat!";
+    }
+  } else {
+    $error = "Syötä salasanasi kahteen kertaan.";
+  }
+  if (!$error) {
+    $salasana = password_hash($formdata['salasana1'], PASSWORD_DEFAULT);
+
+    $rowcount = vaihdaSalasanaAvaimella($salasana,$resetkey);
+    if ($rowcount) {
+
+      return [
+        "status"   => 200,
+        "resetkey" => $resetkey
+      ];
+
+    } else {
+
+      return [
+        "status"   => 500,
+        "resetkey" => $resetkey
+      ];
+
+    }    
+
+  } else {
+    
+    return [
+      "status"   => 400,
+      "resetkey" => $resetkey,
+      "error"    => $error
+    ];
+
+  }
+
+}
+
 ?>

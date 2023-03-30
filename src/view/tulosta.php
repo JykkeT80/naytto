@@ -4,7 +4,7 @@
 
 <p>Tilinpäätöstiedot ja sijoitustiedot</p>
 
-<div class='hae'>
+<div class='tulosta'>
 <?php
 require_once MODEL_DIR . 'funktiot.php'; #model vai controller???
 
@@ -12,6 +12,7 @@ $osTuottoLista = array();  #kasataan kaikkien yritysten ekat osaketuotot PER OSA
 $osTuotto€ = array();
 $osTuottoPros = array();
 $maara = array();
+$hae = haeTiedot();
 foreach ($hae as $haku) {
     $pituus = COUNT($hae); #lasketaan montako yritystä tietokannassa
     $liikevoitto = liikevoitto($haku['liikevaihto'], $haku['materiaalit'], $haku['henkilosto'], $haku['poistot'], $haku['muutkulut']);

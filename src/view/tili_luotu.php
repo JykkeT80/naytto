@@ -1,7 +1,8 @@
-<?php $this->layout('templates', ['title' => 'Tili luotu']) ?>
+<?php $this->layout('template', ['title' => 'Tili luotu']) ?>
 
-<h1>Teille on luotu uusi tili!</h1>
+<h1>Sinulle on luotu  uusi tili!</h1>
 
-<p>Sinulle on lähetetty sähköpostiisi (<?= getValue($formdata, 'email') ?>) vahvistusviesti. 
-Käy vahvistamassa sähköpostiosoitteesi klikkaamalla viestissä olevaa linkkiä</p>
-
+<p>Sinun tulee varmistaa sähköpostiosoitteesi ennen, kuin voit käyttää
+tiliäsi. Sinulle on lähetetty sähköpostiisi (<?= getValue($formdata,'email') ?>)
+vahvistusviesti. Ole hyvä ja käy vahvistamassa sähköpostiosoitteesi klikkaamalla
+viestissä olevaa linkkiä.</p>
