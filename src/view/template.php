@@ -22,7 +22,7 @@
     <ul>
       <li><a href="etusivu" title="Etusivu">Etusivu</a></li>
       <li><a href="lisaa" title="Lisaa tiedot">Lisää tiedot</a></li>
-      <li><a href="hae" title="Tulosta tiedot">Tulosta tiedot</a></li>
+      <li><a href="tulosta" title="Tulosta tiedot">Tulosta tiedot</a></li>
       <li><a href="lisaa_tili" title="Luo uusi tili">Luo uusi tili</a></li>
 </ul>
     <section>

@@ -1,11 +1,5 @@
 <?php
 
-// Hyödynnetään PDO-käärintäluokkaa, joka mahdollistaa SQL-kyselyiden
-// suorittamisen yhden PDO-yhteyden kautta.
-// Luokkakoodi on kopioitu osoitteesta https://phpdelusions.net/wrapper
-
-// Viedään config-tiedoissa määritellyt tietokantaasetukset vakioiksi.
-
 define('DB_HOST', $config['db']['host']);
 define('DB_NAME', $config['db']['dbname']);
 define('DB_USER', $config['db']['username']);

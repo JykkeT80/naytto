@@ -7,3 +7,6 @@ la','EemilRaila@dayrep.com','$2y$10$eh/LGMmCdJqufTWTH/PDYeWtPPqDp4fQS54PaO3cUNng
 E3953246403222256');
 
 3. grant select, insert, update, delete on henkilo2 to 'db_TUNNUS'@'localhost';
+
+SIJOITUS taulukon lisäys:
+1. ALTER TABLE sijoitus ADD lisaaja CHAR(90) AFTER sijoitus;
