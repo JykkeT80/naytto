@@ -13,7 +13,15 @@ switch ($request) {
     case '/etusivu':
         echo $templates->render('etusivu');
         break;
+
+    case '/testi':
+        echo $templates->render('testi');
     
+    case '/testi2':
+        echo $templates->render('testi2');
+
+    
+
     case "/kirjaudu":
         if (isset($_POST['laheta'])) {
             require_once CONTROLLER_DIR . 'kirjaudu.php';
