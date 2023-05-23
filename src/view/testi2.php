@@ -25,7 +25,7 @@ $firmat = haeTiedot();
 
 <?php
 echo "<br>";
-#function checkbox_tiedot () {
+
     $valitut = []; #tästä ajetaan tulostustiedot
     $nimet = []; #apulista täpätyille nimille.
     $viri = array(); #apulista
@@ -45,11 +45,6 @@ if (isset($_POST['submit'])) { #nappia painettu
             $valitut = array_merge($valitut, $viri[$j]); #yhdistetään yritysten tiedot ja ylim listataso saadaan pois.
         }       
     }
-
-#return $valitut;
-#}
-
-#$valitut = checkbox_tiedot();
 
         $osTuottoLista = array();  #kasataan kaikkien yritysten ekat osaketuotot PER OSAKE
         $osTuotto€ = array();
@@ -158,9 +153,7 @@ if (isset($_POST['submit'])) { #nappia painettu
         }
 /*}  else { 
     echo "valitse väh yksi<br>";
-}     
 */
-#$tulos = checkbox_tiedot();
 ?>
 
 <?php

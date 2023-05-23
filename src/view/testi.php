@@ -25,137 +25,167 @@ $firmat = haeTiedot();
 
 <?php
 echo "<br>";
-
-$nimet = array();
-if (isset($_POST['submit'])) { #nappia painettu
-    if ($_POST['nimi']) {   #jos ruutu on täpätty
-        foreach ($_POST['nimi'] as $yritys) {
-            $valitut = haeYritys($yritys);
-        
-            $osTuottoLista = array();  #kasataan kaikkien yritysten ekat osaketuotot PER OSAKE
-            $osTuotto€ = array();
-            $osTuottoPros = array();
-            $maara = array();
-        
-            foreach ($valitut as $arvo) {
-                $liikevoitto = liikevoitto($arvo['liikevaihto'], $arvo['materiaalit'], $arvo['henkilosto'], $arvo['poistot'], $arvo['muutkulut']);
-                $voittoEnnenVeroja = voittoEnnenVeroja($liikevoitto, $arvo['rahoitus']);
-                $tilikaudenVoitto = tilikaudenVoitto($voittoEnnenVeroja, $arvo['verot']);
-                $osaketuotto = osaketuotto($tilikaudenVoitto, $arvo['kokonaismaara']); #tilikaudenvoitto/osakkeidenmaara
-                array_push($osTuottoLista,$osaketuotto);
-                $omatOsakkeetAlussa = osakkeetAlussa($arvo['sijoitus'], $arvo['osakehinta']); #sijoiitus/osakehinta
-                $tulos = sipo($osaketuotto, $omatOsakkeetAlussa, $arvo['sijoitus']); #palauttaa listan $tulos jossa tuotto€ja tuottoPros
-                $tuotto€ = $tulos[0]; #poimitaan listasta eka indeksi 
-                $tuottoPros = $tulos[1]; #toinen indeksi
-                array_push($osTuotto€, $tuotto€); #eurotuotto listalle
-                array_push($osTuottoPros, $tuottoPros); #%tuotto listalle
-                $uudetOsakkeet = tuottoVuosittain($tuotto€, $arvo['osakehinta']); #lasketaan uusien osakkeiden määrä
-                array_push($maara, $uudetOsakkeet); #lisätään uusien osakkeiden määrä listalle
-                $yhtmaara = yhteismaara($omatOsakkeetAlussa, $uudetOsakkeet); #lasketaan sijoittajan osakkeiden yhteismäärä   
-            }
-            
-            echo "TIEDOT OSAKKEISTA";
-            echo "<table>";
-            echo "<tr>";
-            echo "<th></th>";
-            
-            foreach ($valitut as $arvo) {
-            echo "<th> $arvo[nimi] </th>"; 
-            }
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Osakkeiden kokonaismäärä kpl</td>";
-            foreach ($valitut as $arvo) {
-            echo "<td> $arvo[kokonaismaara] </td>";
-            } 
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Osakkeen hinta €/osake</td>";
-            foreach ($valitut as $arvo) {
-            echo "<td> $arvo[osakehinta] </td>";
-            } 
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Osakketuotto €/osake</td>";
-            for ($i=0; $i<COUNT($valitut); $i++) {
-            echo "<td>" . ROUND($osTuottoLista[$i],2) . "</td>";
-            } 
-            echo "</tr>";
-            echo "</table>";
-            echo "<br>";
-        
-            echo "SIJOITUSLASKURI";
-            echo "<table>";
-            echo "<tr>";
-            echo "<th></th>";
-            foreach ($valitut as $arvo) {
-            echo "<th> $arvo[nimi] </th>"; 
-            }
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Sijoitettava summa €</td>";
-            foreach ($valitut as $arvo) {
-            echo "<td>$arvo[sijoitus] </td>";
-            } 
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Sijlituksella saadut osakkeet kpl</td>";
-            foreach ($valitut as $arvo) {
-            echo "<td>" . ROUND($arvo['sijoitus']/$arvo['osakehinta'],2) . "</td>";
-            } 
-            echo "</tr>";
-            echo "</table>";
-            echo "<br>";
-
-            echo "SIJOITETUN PÄÄOMAN TUOTTO";
-            echo "<table>";
-            echo "<tr>";
-            echo "<th></th>";
-            foreach ($valitut as $arvo) {
-            echo "<th> $arvo[nimi] </th>"; 
-            }
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Tuotto €</td>";
-            for ($i=0; $i<COUNT($valitut); $i++) {
-                echo "<td>" . ROUND($osTuotto€[$i],2) . "</td>";
-                }
-            echo "</tr>";
-
-            echo "<tr>";
-            echo "<td>Tuotto suhteessa sijoitukseen %</td>";
-            for ($i=0; $i<COUNT($valitut); $i++) {
-                echo "<td>" . ROUND($osTuottoPros[$i],2) . "</td>";
-                }
-            echo "</tr>";
-            echo "</table>";
-            echo "<br>";
-            
-        }
-    }
-}
     
-?>
-<!--
-<form action="" method="POST">
-<input type="submit" name="lisatiedot" value="Tulosta Lisätiedot">
-</form>
+$valitut = []; #tästä ajetaan tulostustiedot
+$nimet = []; #apulista täpätyille nimille.
+$viri = array(); #apulista
 
+if (isset($_POST['submit'])) { #nappia painettu
+    
+    if ($_POST['nimi']) {   #jos ruutu on täpätty
+        
+        foreach ($_POST['nimi'] as $yritys) {
+            array_push($nimet, $yritys); #täpätyt nimet listaan
+        }
+
+        for ($i=0; $i<COUNT($nimet); $i++) {
+            array_push($viri, haeYritys($nimet[$i])); #apulistaan haettujen yritysten tiedot, jää yksi listataso liikaa!!!
+        }
+        
+        for ($j=0; $j<COUNT($viri); $j++) {
+            $valitut = array_merge($valitut, $viri[$j]); #yhdistetään yritysten tiedot ja ylim listataso saadaan pois.
+        }       
+    }
+
+        $osTuottoLista = array();  #kasataan kaikkien yritysten ekat osaketuotot PER OSAKE
+        $osTuotto€ = array();
+        $osTuottoPros = array();
+        $maara = array();
+
+        foreach ($valitut as $arvo) {
+            $liikevoitto = liikevoitto($arvo['liikevaihto'], $arvo['materiaalit'], $arvo['henkilosto'], $arvo['poistot'], $arvo['muutkulut']);
+            $voittoEnnenVeroja = voittoEnnenVeroja($liikevoitto, $arvo['rahoitus']);
+            $tilikaudenVoitto = tilikaudenVoitto($voittoEnnenVeroja, $arvo['verot']);
+            $osaketuotto = osaketuotto($tilikaudenVoitto, $arvo['kokonaismaara']); #tilikaudenvoitto/osakkeidenmaara
+            array_push($osTuottoLista,$osaketuotto);
+            $omatOsakkeetAlussa = osakkeetAlussa($arvo['sijoitus'], $arvo['osakehinta']); #sijoiitus/osakehinta
+            $tulos = sipo($osaketuotto, $omatOsakkeetAlussa, $arvo['sijoitus']); #palauttaa listan $tulos jossa tuotto€ja tuottoPros
+            $tuotto€ = $tulos[0]; #poimitaan listasta eka indeksi 
+            $tuottoPros = $tulos[1]; #toinen indeksi
+            array_push($osTuotto€, $tuotto€); #eurotuotto listalle
+            array_push($osTuottoPros, $tuottoPros); #%tuotto listalle
+            $uudetOsakkeet = tuottoVuosittain($tuotto€, $arvo['osakehinta']); #lasketaan uusien osakkeiden määrä
+            array_push($maara, $uudetOsakkeet); #lisätään uusien osakkeiden määrä listalle
+            $yhtmaara = yhteismaara($omatOsakkeetAlussa, $uudetOsakkeet); #lasketaan sijoittajan osakkeiden yhteismäärä   
+        }
+        
+        echo "TIEDOT OSAKKEISTA";
+        echo "<table>";
+        echo "<tr>";
+        echo "<th></th>";
+        
+        foreach ($valitut as $arvo) {
+        echo "<th> $arvo[nimi] </th>"; 
+        }
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Osakkeiden kokonaismäärä kpl</td>";
+        foreach ($valitut as $arvo) {
+        echo "<td> $arvo[kokonaismaara] </td>";
+        } 
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Osakkeen hinta €/osake</td>";
+        foreach ($valitut as $arvo) {
+        echo "<td> $arvo[osakehinta] </td>";
+        } 
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Osakketuotto €/osake</td>";
+        for ($i=0; $i<COUNT($valitut); $i++) {
+        echo "<td>" . ROUND($osTuottoLista[$i],2) . "</td>";
+        } 
+        echo "</tr>";
+        echo "</table>";
+        echo "<br>";
+    
+        echo "SIJOITUSLASKURI";
+        echo "<table>";
+        echo "<tr>";
+        echo "<th></th>";
+        foreach ($valitut as $arvo) {
+        echo "<th> $arvo[nimi] </th>"; 
+        }
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Sijoitettava summa €</td>";
+        foreach ($valitut as $arvo) {
+        echo "<td>$arvo[sijoitus] </td>";
+        } 
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Sijlituksella saadut osakkeet kpl</td>";
+        foreach ($valitut as $arvo) {
+        echo "<td>" . ROUND($arvo['sijoitus']/$arvo['osakehinta'],2) . "</td>";
+        } 
+        echo "</tr>";
+        echo "</table>";
+        echo "<br>";
+
+        echo "SIJOITETUN PÄÄOMAN TUOTTO";
+        echo "<table>";
+        echo "<tr>";
+        echo "<th></th>";
+        foreach ($valitut as $arvo) {
+        echo "<th> $arvo[nimi] </th>"; 
+        }
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Tuotto €</td>";
+        for ($i=0; $i<COUNT($valitut); $i++) {
+            echo "<td>" . ROUND($osTuotto€[$i],2) . "</td>";
+            }
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td>Tuotto suhteessa sijoitukseen %</td>";
+        for ($i=0; $i<COUNT($valitut); $i++) {
+            echo "<td>" . ROUND($osTuottoPros[$i],2) . "</td>";
+            }
+        echo "</tr>";
+        echo "</table>";
+        echo "<br>";
+        }
+?>
 
 <?php
-/*
-echo "<br>";
-if ($_POST) {
+
+if (isset($_POST['submit'])) {  #nappi tulee, jos perustiedot tulostettu
+    echo '<form action="" method="POST">
+    <button name="lisatiedot" type="submit">Tulosta lisätiedot</button>
+    </form><br>';
+}
+    if (isset($_POST['lisatiedot'])) {
+        /*
+        $nimet = array();
+        $valitut = array();
+        $viri = array();
+
+        if ($_POST['nimi']) {   #jos ruutu on täpätty
+        
+            foreach ($_POST['nimi'] as $yritys) {
+                array_push($nimet, $yritys); #täpätyt nimet listaan
+            }
+    
+            for ($i=0; $i<COUNT($nimet); $i++) {
+                array_push($viri, haeYritys($nimet[$i])); #apulistaan haettujen yritysten tiedot, jää yksi listataso liikaa!!!
+            }
+            
+            for ($j=0; $j<COUNT($viri); $j++) {
+                $valitut = array_merge($valitut, $viri[$j]); #yhdistetään yritysten tiedot ja ylim listataso saadaan pois.
+            }       
+        }  */
+    }
     echo "TUOTTOJEN SIJOITUS VUOSI VUODELTA";
     echo "<hr>";
     echo "<br>";
-    foreach ($tulos as $arvo) {
+    foreach ($valitut as $arvo) {
         $maara2 = array();
         $euro = array();
         $pros= array();
@@ -164,14 +194,14 @@ if ($_POST) {
         $voittoEnnenVeroja = voittoEnnenVeroja($liikevoitto, $arvo['rahoitus']);
         $tilikaudenVoitto = tilikaudenVoitto($voittoEnnenVeroja, $arvo['verot']);
         $osaketuotto = osaketuotto($tilikaudenVoitto, $arvo['kokonaismaara']); #tilikaudenvoitto/osakkeidenmaara
-        array_push($osTuottoLista,$osaketuotto);
+        #array_push($osTuottoLista,$osaketuotto);
         $omatOsakkeetAlussa = osakkeetAlussa($arvo['sijoitus'], $arvo['osakehinta']); #sijoiitus/osakehinta
         $tulos = sipo($osaketuotto, $omatOsakkeetAlussa, $arvo['sijoitus']); #palauttaa listan $tulos jossa tuotto€ja tuottoPros
         $tuotto€ = $tulos[0]; #poimitaan listasta eka indeksi 
         $tuottoPros = $tulos[1]; #toinen indeksi
         $uudetOsakkeet = tuottoVuosittain($tuotto€, $arvo['osakehinta']); #lasketaan uusien osakkeiden määrä
         $yhtmaara = yhteismaara($omatOsakkeetAlussa, $uudetOsakkeet); #lasketaan sijoittajan osakkeiden yhteismäärä  
-
+    
 echo "<table>";
 echo "<tr>";
     echo "<th>$arvo[nimi]</th>";
@@ -217,5 +247,6 @@ for ($i=0; $i<4; $i++) {
 echo "</tr>";
 echo "</table>"; 
 }
-}
+
+
 ?>
