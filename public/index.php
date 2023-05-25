@@ -16,11 +16,15 @@ switch ($request) {
 
     case '/testi':
         echo $templates->render('testi');
+        break;
     
     case '/testi2':
         echo $templates->render('testi2');
+        break;
 
-    
+    case '/testi3':
+        echo $templates->render('testi3');
+        break;
 
     case "/kirjaudu":
         if (isset($_POST['laheta'])) {
