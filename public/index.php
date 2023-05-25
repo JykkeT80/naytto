@@ -14,18 +14,6 @@ switch ($request) {
         echo $templates->render('etusivu');
         break;
 
-    case '/testi':
-        echo $templates->render('testi');
-        break;
-    
-    case '/testi2':
-        echo $templates->render('testi2');
-        break;
-
-    case '/testi3':
-        echo $templates->render('testi3');
-        break;
-
     case "/kirjaudu":
         if (isset($_POST['laheta'])) {
             require_once CONTROLLER_DIR . 'kirjaudu.php';
@@ -131,9 +119,7 @@ switch ($request) {
     
     case '/tulosta':
         if (isset($_SESSION['user'])) {
-            require_once MODEL_DIR . 'tulosta.php';
-            $hae=haeTiedot();
-            echo $templates->render('tulosta', ['tulosta' => $hae]);
+            echo $templates->render('tulosta');
             break;
         } else {
             echo $templates ->render('kirjautumaton');
@@ -173,7 +159,6 @@ switch ($request) {
             echo $templates->render('reset_lomake', ['error' => '']);
             break;
         }
-        #break; oliko tää väärin? ilmoittaa unreachable code?
 
     default:
         echo $templates->render('notfound');
