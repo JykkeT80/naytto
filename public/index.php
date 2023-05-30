@@ -7,7 +7,6 @@ $request = strtok($request, '?');
 
 $templates = new League\Plates\Engine(TEMPLATE_DIR);
 
-
 switch ($request) {
     case '/':
     case '/etusivu':
@@ -63,6 +62,10 @@ switch ($request) {
         }
         break;
 
+    case '/tallennusok':
+        echo $templates->render('tallennusok');
+        break;
+            
     case '/lisaa_tili':
         if (isset($_POST['laheta'])) {
             $formdata = siistiTiedot($_POST);
@@ -125,6 +128,48 @@ switch ($request) {
             echo $templates ->render('kirjautumaton');
             break;
         }
+
+    case '/yhteydenotto':
+        # Kun lähetä-nappia on painettu yhteydenottolomakkeella, 
+        # otetaan valmisteltavaksi lähetettävä viesti
+        if (isset($_POST['laheta'])) {
+            require_once CONTROLLER_DIR . 'viesti.php';
+            require_once HELPERS_DIR . 'form.php';
+            # Viestin siistiminen ylimääräisistä merkeistä
+            $formdata = siistiTiedot($_POST);
+            # Viestin ja email-osoitteen virhetarkistus
+            $tulos = tarkistaViesti($formdata);
+            # Viesti lähetetään, ellei sisältänyt virheitä
+            if ($tulos['status'] == "200") {
+            $email = getValue($formdata,'email');
+            $viesti = getValue($formdata,'viesti');
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            $headers .= 'From: ' .$email. "\r\n";
+            $result = mail("kirsi.nykanen@edu.sasky.fi", "Palaute", $viesti, $headers);
+            # Mikäli viestin lähetys ei onnistu, ilmoitetaan virheestä virhe-sivulla
+            if(!$result) {
+                header( "Location: virhe" );
+                break;
+            # Kun viestin lähetys onnistuu, ohjataan kiitos-sivulle 
+            } else {
+                header( "Location: kiitos" );
+        }
+            }
+            # Mikäli viesti sisältää virheitä, ilmoitetaan niistä lomakkeella
+            else
+            echo $templates->render('yhteydenotto', ['formdata' => $formdata, 'error' => $tulos['error']]);
+            break;
+            }
+        # Mikäli Lähetä-nappia ei olla painettu, renderöidään yhteydenotto-lomakesivu
+        else {
+            echo $templates->render('yhteydenotto', ['formdata' => [], 'error' => []]);
+            break;
+        }
+
+    case '/kiitos':
+        echo $templates->render('kiitos');
+        break;
 
     case '/notfound':
         echo $templates->render('notfound');
