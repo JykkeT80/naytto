@@ -5,41 +5,43 @@
 <h2>Osake- ja sijoitustiedot</h2>
 <br>
 <h3> Valitse vertailtavat yritykset:</h3>
+<br>
 
 <?php
 require_once MODEL_DIR . 'tulosta.php';
 require_once MODEL_DIR . 'funktiot.php'; 
 
-echo "Valitse vertailtavat yritykset";
-
 $firmat = haeTiedot();
+
 ?>
 
 <div class="yritykset">
 <form method="post" action="">
+    
     <?php
     foreach ($firmat as $firma) { #checkbox täpätyt listana 'nimi[]' jotta toimii foreach loopissa.
-        echo "<input type='checkbox' name='nimi[]' value='$firma[nimi]'> $firma[nimi] <br>"; 
-    } #"tulosta" nimisiä nappuloita on kaksi ja klikattava tuottaa tuloksen switchiin. Kaikki inputit täytyy olla
-      # saman formin sisällä, jos tekee erilliset niin yksi tai useampi tieto jää postaamatta eikä tulostus toimi.  
-    ?>  
+        echo "<div class='checkbox'>
+        <input type='checkbox' name='nimi[]' id='nimi[]' value='$firma[nimi]'> $firma[nimi]
+        </div>";
+    }
+    ?> 
 
 <br>
 <div class="vertaa">
-<input type="submit" value="Tulosta perustiedot" name="tulosta"><br>
-<input type="submit" value="Tulosta sijoitustiedot" name="tulosta">
+<input type="submit" value="Alkusijoitukset" name="tulosta"><br>
+<input type="submit" value="5v tuotto" name="tulosta">
 </div>
 </form> 
+</div>
+<br>
 
 <?php
-
-echo "<br>";
 
 if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA RUUTU TÄPÄTTY
      $lomake = $_POST['tulosta'];
     
     switch($lomake){
-        case 'Tulosta perustiedot':
+        case 'Alkusijoitukset':
             $valitut = []; #tästä ajetaan tulostustiedot
         
             foreach ($_POST['nimi'] as $yritys) {
@@ -68,7 +70,8 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
                 $yhtmaara = yhteismaara($omatOsakkeetAlussa, $uudetOsakkeet); #lasketaan sijoittajan osakkeiden yhteismäärä   
             }
         
-            echo "TIEDOT OSAKKEISTA";
+            echo "<div class='otsake'>TIEDOT OSAKKEISTA</div>";
+            echo "<br>";
             echo "<table>";
             echo "<tr>";
             echo "<th></th>";
