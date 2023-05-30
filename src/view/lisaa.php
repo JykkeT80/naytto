@@ -1,8 +1,8 @@
 <?php $this->layout('template', ['title' => 'Lisaa tiedot']) ?>
 
-    <h1>Lisää tiedot tietokantaan</h1>
-
+    <div class="kirjautuminen">
     <form action="" method="POST">
+    <h1>Lisää yrityksen tiedot</h1>
         <div>
             <label>Nimi:</label>
             <input type="text" name="nimi" value="<?= getValue($formdata, 'nimi') ?>">
@@ -56,6 +56,6 @@
             <div class="error"><?=getValue($error, 'sijoitus'); ?></div>
         </div>
         <div>
-            <input type="submit" name="laheta" value="Lisää tiedot">
+            <input type="submit" name="laheta" value="TALLENNA">
         </div>
     </form>

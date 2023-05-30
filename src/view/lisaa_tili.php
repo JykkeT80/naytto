@@ -1,8 +1,10 @@
 <?php $this->layout('template', ['title' => 'Luo uusi tili'])?>
 
-<h1>Luo uusi tili</h1>
+
 
 <form action="" method="POST">
+    <br>
+    <h1>Luo uusi tili</h1>
     <div>
         <label for="nimi">Nimi:</label>
         <input id="nimi" type="text" name="nimi" value="<?= getValue($formdata,'nimi') ?>">

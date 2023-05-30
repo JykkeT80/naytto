@@ -1,8 +1,7 @@
 <?php $this->layout('template', ['title' => 'Salasanan vaihtaminen']) ?>
 
-<h1>Salasanan vaihtaminen</h1>
-
 <form action="" method="POST">
+<h1>Salasanan vaihtaminen</h1>
   <div>
     <label for="salasana1">Salasana:</label>
     <input id="salasana1" type="password" name="salasana1">

@@ -1,10 +1,11 @@
 <?php $this->layout('template', ['title' => 'Tulosta tiedot']); ?>
 
-<h1>Tietojen tulostus tietokannasta</h1>
+<div class="kirjautuminen">
+<br><br>
+<h2>Osake- ja sijoitustiedot</h2>
+<br>
+<h3> Valitse vertailtavat yritykset:</h3>
 
-<p>Tilinpäätöstiedot ja sijoitustiedot</p>
-
-<div class='tulosta'>
 <?php
 require_once MODEL_DIR . 'tulosta.php';
 require_once MODEL_DIR . 'funktiot.php'; 
@@ -14,15 +15,20 @@ echo "Valitse vertailtavat yritykset";
 $firmat = haeTiedot();
 ?>
 
+<div class="yritykset">
 <form method="post" action="">
     <?php
     foreach ($firmat as $firma) { #checkbox täpätyt listana 'nimi[]' jotta toimii foreach loopissa.
         echo "<input type='checkbox' name='nimi[]' value='$firma[nimi]'> $firma[nimi] <br>"; 
     } #"tulosta" nimisiä nappuloita on kaksi ja klikattava tuottaa tuloksen switchiin. Kaikki inputit täytyy olla
       # saman formin sisällä, jos tekee erilliset niin yksi tai useampi tieto jää postaamatta eikä tulostus toimi.  
-    ?>   
+    ?>  
+
+<br>
+<div class="vertaa">
 <input type="submit" value="Tulosta perustiedot" name="tulosta"><br>
 <input type="submit" value="Tulosta sijoitustiedot" name="tulosta">
+</div>
 </form> 
 
 <?php
@@ -146,18 +152,16 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
             echo "<br>";
             break;
 
-        case 'Tulosta sijoitustiedot':
-            $nimet = array();
+        case '5v tuotto':
             $valitut = array();
-            $viri = array();
 
             foreach ($_POST['nimi'] as $yritys) {
                 $valitut = array_merge($valitut, haeYritys($yritys)); #täpätyt tiedot listaan
             }   
         
-            echo "TUOTTOJEN SIJOITUS VUOSI VUODELTA";
+            echo "<div class='otsake'>TUOTTOJEN SIJOITUS VUOSI VUODELTA</div>";
             echo "<hr>";
-            echo "<br>";
+
             foreach ($valitut as $arvo) {
                 $maara2 = array();
                 $euro = array();
@@ -221,9 +225,11 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
                 }
                 break;
                 
-                default:
-                echo " ei tulostettavaa";
-            }
+        }
+} else { 
+    if (isset($_POST['tulosta']) AND !isset($_POST['nimi'])){#nappia painettu mutta ruutua ei ole täpätty
+        echo "<h4>Valitse ainakin yksi vaihtoehto</h4>";
+}
 }
 
 ?>
