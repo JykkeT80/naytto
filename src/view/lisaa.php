@@ -1,6 +1,6 @@
 <?php $this->layout('template', ['title' => 'Lisaa tiedot']) ?>
 
-    <div class="kirjautuminen">
+<div class="kirjautuminen">
     <form action="" method="POST">
     <h1>Lisää yrityksen tiedot</h1>
         <div>
@@ -33,6 +33,7 @@
             <input type="number" name="muutkulut" value="<?= getValue($formdata, 'muutkulut') ?>">
             <div class="error"><?=getValue($error, 'muutkulut'); ?></div>
         </div>
+        <div>
             <label>Rahoitustuotot ja -kulut: </label>
             <input type="number" name="rahoitus" value="<?= getValue($formdata, 'rahoitus') ?>">
             <div class="error"><?=getValue($error, 'rahoitus'); ?></div>
@@ -47,9 +48,11 @@
             <input type="number" name="kokonaismaara" value="<?= getValue($formdata, 'kokonaismaara') ?>">
             <div class="error"><?=getValue($error, 'kokonaismaara'); ?></div>
         </div>
+        <div>
             <label>Osakkeen hinta: </label>
             <input type="number" name="osakehinta" value="<?= getValue($formdata, 'osakehinta') ?>">
             <div class="error"><?=getValue($error, 'osakehinta'); ?></div>
+        </div>
         <div>
             <label>Sijoitettava summa: </label>
             <input type="number" name="sijoitus" value="<?= getValue($formdata, 'sijoitus') ?>">
@@ -58,4 +61,5 @@
         <div>
             <input type="submit" name="laheta" value="TALLENNA">
         </div>
+    </div> 
     </form>

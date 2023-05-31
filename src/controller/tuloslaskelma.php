@@ -7,7 +7,6 @@ function tarkistaTiedot ($formdata) {
     require_once (MODEL_DIR . 'lisaa.php');
     $error = [];
 
-    #nimi, pitää vielä tehdä funktio, joka estää saman yrityksen nimen syöttämisen toistamiseen. 
     if (!isset($formdata['nimi']) || !$formdata['nimi']) {
         $error['nimi'] = "Syötä yrityksen nimi.";
     } else {

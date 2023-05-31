@@ -47,7 +47,7 @@ switch ($request) {
                 require_once CONTROLLER_DIR . 'tuloslaskelma.php';
                 $tulos = tarkistaTiedot($formdata);
                 if ($tulos['status'] == "200") {
-                    echo "Tiedot lisätty yrityksen $_POST[nimi] nimellä.";
+                    echo $templates->render('tallennusok');
                     break;
                 }
                 echo $templates ->render('lisaa', ['formdata' => $formdata, 'error' => $tulos['error']]);
