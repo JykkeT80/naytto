@@ -69,6 +69,11 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
                 array_push($maara, $uudetOsakkeet); #lisätään uusien osakkeiden määrä listalle
                 $yhtmaara = yhteismaara($omatOsakkeetAlussa, $uudetOsakkeet); #lasketaan sijoittajan osakkeiden yhteismäärä   
             }
+
+            if (COUNT($valitut) > 5) {
+                echo "Ole hyvä ja valitse korkeintaa 5 tulostettavaa yritystä";
+                break;
+            }
         
             echo "<div class='otsake'>TIEDOT OSAKKEISTA</div>";
             echo "<br>";
@@ -161,7 +166,12 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
             foreach ($_POST['nimi'] as $yritys) {
                 $valitut = array_merge($valitut, haeYritys($yritys)); #täpätyt tiedot listaan
             }   
-        
+            
+            if (COUNT($valitut) > 5) {
+                echo "Ole hyvä ja valitse korkeintaa 5 tulostettavaa yritystä";
+                break;
+            }
+            
             echo "<div class='otsake'>TUOTTOJEN SIJOITUS VUOSI VUODELTA</div>";
             echo "<hr>";
 
