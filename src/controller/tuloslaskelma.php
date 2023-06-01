@@ -38,7 +38,7 @@ function tarkistaTiedot ($formdata) {
     }
    
     #henkilosto
-    if (!isset($formdata['henkilosto']) AND $formdata['henkilosto'] != 0|| !$formdata['henkilosto']) {
+    if (!isset($formdata['henkilosto']) AND $formdata['henkilosto'] != 0 || !$formdata['henkilosto']) {
         $error['henkilosto'] = "Syötä yrityksen henkilöstökulut.";
     } else if ($formdata['henkilosto'] < "0") {
         $error['henkilosto'] = "Syötä henkilöstökulut suurempana tai yhtäsuurena kuin nolla";
@@ -47,7 +47,7 @@ function tarkistaTiedot ($formdata) {
     }
 
     #poistot
-    if (!isset($formdata['poistot']) AND $formdata['poistot'] != 0|| !$formdata['poistot']) {
+    if (!isset($formdata['poistot']) AND $formdata['poistot'] != 0 || !$formdata['poistot']) {
         $error['poistot'] = "Syötä yrityksen poistot.";
     } else if ($formdata['poistot'] < "0") {
         $error['poistot'] = "Syötä poistot suurempana tai yhtäsuurena kuin nolla";
@@ -93,9 +93,11 @@ function tarkistaTiedot ($formdata) {
     } 
 
     #sijoitus
-    if (!isset($formdata['sijoitus']) || !$formdata['sijoitus']) {
+    if (!isset($formdata['sijoitus']) || !$formdata['sijoitus'])  {
         $error['sijoitus'] = "Syötä sijoitettava summa.";
-    } 
+    } else if ($formdata['sijoitus'] < $formdata['osakehinta']) {
+        $error['sijoitus'] = "Sijoitettavan summan on oltava vähintään $formdata[osakehinta].";
+    }
     
     if (!$error) {
         $nimi = $formdata['nimi'];
