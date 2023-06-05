@@ -36,6 +36,10 @@ $firmat = haeTiedot();
 <br>
 
 <?php
+if (isset($_POST['tulosta']) AND empty($firmat))  { #nappia painettu, yhtään yritystä ei tk:ssa
+    echo "<h4>Yhtään yritystä ei ole tallennettu</h4>";
+    echo "<h4>Käy lisäämässä ensin ainakin 1 yrityksen tiedot</h4>";
+}
 
 if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA RUUTU TÄPÄTTY
      $lomake = $_POST['tulosta'];
@@ -72,6 +76,7 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
 
             if (COUNT($valitut) > 5) {
                 echo "Ole hyvä ja valitse korkeintaa 5 tulostettavaa yritystä";
+                echo "<br>";
                 break;
             }
         
@@ -126,7 +131,7 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
             echo "</tr>";
 
             echo "<tr>";
-            echo "<td>Sijlituksella saadut osakkeet kpl</td>";
+            echo "<td>Sijoituksella saadut osakkeet kpl</td>";
             foreach ($valitut as $arvo) {
             echo "<td>" . ROUND($arvo['sijoitus']/$arvo['osakehinta'],2) . "</td>";
             } 
@@ -240,7 +245,8 @@ if (isset($_POST['tulosta']) AND isset($_POST['nimi']))  { #nappia painettu JA R
                 
         }
 } else { 
-    if (isset($_POST['tulosta']) AND !isset($_POST['nimi'])){#nappia painettu mutta ruutua ei ole täpätty
+    if (isset($_POST['tulosta']) AND !isset($_POST['nimi']) AND !isset($firmat) || $firmat == true){
+        #nappia painettu mutta ruutua ei ole täpätty
         echo "<h4>Valitse ainakin yksi vaihtoehto</h4>";
 }
 }
