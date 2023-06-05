@@ -9,7 +9,7 @@
 
 <?php
 require_once MODEL_DIR . 'tulosta.php';
-require_once MODEL_DIR . 'funktiot.php'; 
+require_once CONTROLLER_DIR . 'funktiot.php'; 
 
 $firmat = haeTiedot();
 
