@@ -17,10 +17,10 @@
     <input type="submit" name="laheta" value="Kirjaudu">
   </div>
   <div class="info">
-  <a href="tilaa_vaihtoavain">Salasana unohtunut?</a>.
+  <a href="tilaa_vaihtoavain">Salasana unohtunut?</a>
   </div>
   <div class="info">
-  <a href="lisaa_tili">Luo uusi tili</a>.
+  <a href="lisaa_tili">Luo uusi tili</a>
   </div>
   </form>
 
